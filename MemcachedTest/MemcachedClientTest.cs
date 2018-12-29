@@ -218,40 +218,38 @@ namespace MemcachedTest
             {
                 log.Debug("Cache should be empty.");
 
-                var cacheKey = $"{nameof(AddSetReplaceTest)}-{Guid.NewGuid()}";
-
-                Assert.True(client.Store(StoreMode.Set, cacheKey, "1"), "Initialization failed");
+                Assert.True(client.Store(StoreMode.Set, "VALUE", "1"), "Initialization failed");
 
                 log.Debug("Setting VALUE to 1.");
 
-                Assert.Equal("1", client.Get(cacheKey));
+                Assert.Equal("1", client.Get("VALUE"));
 
                 log.Debug("Adding VALUE; this should return false.");
-                Assert.False(client.Store(StoreMode.Add, cacheKey, "2"), "Add should have failed");
+                Assert.False(client.Store(StoreMode.Add, "VALUE", "2"), "Add should have failed");
 
                 log.Debug("Checking if VALUE is still '1'.");
-                Assert.Equal("1", client.Get(cacheKey));
+                Assert.Equal("1", client.Get("VALUE"));
 
                 log.Debug("Replacing VALUE; this should return true.");
-                Assert.True(client.Store(StoreMode.Replace, cacheKey, "4"), "Replace failed");
+                Assert.True(client.Store(StoreMode.Replace, "VALUE", "4"), "Replace failed");
 
                 log.Debug("Checking if VALUE is '4' so it got replaced.");
-                Assert.Equal("4", client.Get(cacheKey));
+                Assert.Equal("4", client.Get("VALUE"));
 
                 log.Debug("Removing VALUE.");
-                Assert.True(client.Remove(cacheKey), "Remove failed");
+                Assert.True(client.Remove("VALUE"), "Remove failed");
 
                 log.Debug("Replacing VALUE; this should return false.");
-                Assert.False(client.Store(StoreMode.Replace, cacheKey, "8"), "Replace should not have succeeded");
+                Assert.False(client.Store(StoreMode.Replace, "VALUE", "8"), "Replace should not have succeeded");
 
                 log.Debug("Checking if VALUE is 'null' so it was not replaced.");
-                Assert.Null(client.Get(cacheKey));
+                Assert.Null(client.Get("VALUE"));
 
                 log.Debug("Adding VALUE; this should return true.");
-                Assert.True(client.Store(StoreMode.Add, cacheKey, "16"), "Item should have been Added");
+                Assert.True(client.Store(StoreMode.Add, "VALUE", "16"), "Item should have been Added");
 
                 log.Debug("Checking if VALUE is '16' so it was added.");
-                Assert.Equal("16", client.Get(cacheKey));
+                Assert.Equal("16", client.Get("VALUE"));
 
                 log.Debug("Passed AddSetReplaceTest.");
             }
