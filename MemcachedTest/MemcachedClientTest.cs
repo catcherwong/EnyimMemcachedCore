@@ -21,6 +21,8 @@ namespace MemcachedTest
 
         protected virtual MemcachedClient GetClient(MemcachedProtocol protocol = MemcachedProtocol.Binary, bool useBinaryFormatterTranscoder = false)
         {
+            var configuration = new ConfigurationBuilder().Build();
+
             IServiceCollection services = new ServiceCollection();
             services.AddEnyimMemcached(options =>
             {
@@ -36,7 +38,6 @@ namespace MemcachedTest
                 services.AddSingleton<ITranscoder, BinaryFormatterTranscoder>();
             }
 
-            var configuration = new ConfigurationBuilder().Build();
             services.AddSingleton<IConfiguration>(configuration);
             services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Error).AddConsole());
 
