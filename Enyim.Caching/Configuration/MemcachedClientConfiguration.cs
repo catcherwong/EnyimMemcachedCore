@@ -27,7 +27,7 @@ namespace Enyim.Caching.Configuration
         public MemcachedClientConfiguration(
             ILoggerFactory loggerFactory,
             IOptions<MemcachedClientOptions> optionsAccessor,
-            IConfiguration configuration = null,
+            IConfiguration configuration,
             ITranscoder transcoder = null,
             IMemcachedKeyTransformer keyTransformer = null)
         {
@@ -39,7 +39,7 @@ namespace Enyim.Caching.Configuration
             _logger = loggerFactory.CreateLogger<MemcachedClientConfiguration>();
 
             var options = optionsAccessor.Value;
-            if ((options == null || options.Servers.Count == 0) && configuration != null)
+            if(options == null || options.Servers.Count == 0)
             {
                 configuration.GetSection("enyimMemcached").Bind(options);
             }
