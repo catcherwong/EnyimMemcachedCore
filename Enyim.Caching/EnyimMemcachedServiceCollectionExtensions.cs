@@ -1,5 +1,4 @@
 ﻿using Enyim.Caching.Configuration;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -26,7 +25,6 @@ namespace Enyim.Caching
             services.Configure(setupAction);
             services.Add(ServiceDescriptor.Transient<IMemcachedClientConfiguration, MemcachedClientConfiguration>());
             services.Add(ServiceDescriptor.Singleton<IMemcachedClient, MemcachedClient>());
-            services.Add(ServiceDescriptor.Singleton<IDistributedCache, MemcachedClient>());
 
             return services;
         }
