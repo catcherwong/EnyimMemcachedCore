@@ -21,8 +21,6 @@ namespace Enyim.Caching.Configuration
 
         public ITranscoder Transcoder { get; set; }
 
-        public IProviderFactory<IMemcachedNodeLocator> NodeLocatorFactory { get; set; }
-
         public MemcachedClientOptions Value => this;
 
         public void AddServer(string address, int port)
