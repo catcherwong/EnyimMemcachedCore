@@ -831,25 +831,33 @@ namespace Enyim.Caching
         public ServerStats Stats(string type)
         {
             var results = new Dictionary<EndPoint, Dictionary<string, string>>();
-            var tasks = new List<Task>();
+            var handles = new List<WaitHandle>();
 
             foreach (var node in this.pool.GetWorkingNodes())
             {
                 var cmd = this.pool.OperationFactory.Stats(type);
                 var action = new Func<IOperation, IOperationResult>(node.Execute);
-                var endpoint = node.EndPoint;
+                var mre = new ManualResetEvent(false);
 
-                tasks.Add(Task.Run(() =>
+                handles.Add(mre);
+
+                action.BeginInvoke(cmd, iar =>
                 {
-                    action(cmd);
-                    lock (results)
-                        results[endpoint] = cmd.Result;
-                }));
+                    using (iar.AsyncWaitHandle)
+                    {
+                        action.EndInvoke(iar);
+
+                        lock (results)
+                            results[((IMemcachedNode)iar.AsyncState).EndPoint] = cmd.Result;
+
+                        mre.Set();
+                    }
+                }, node);
             }
 
-            if (tasks.Count > 0)
+            if (handles.Count > 0)
             {
-                Task.WaitAll(tasks.ToArray());
+                SafeWaitAllAndDispose(handles.ToArray());
             }
 
             return new ServerStats(results);
@@ -900,7 +908,7 @@ namespace Enyim.Caching
             var byServer = GroupByServer(hashed.Keys);
 
             var retval = new Dictionary<string, T>(hashed.Count);
-            var tasks = new List<Task>();
+            var handles = new List<WaitHandle>();
 
             //execute each list of keys on their respective node
             foreach (var slice in byServer)
@@ -910,42 +918,50 @@ namespace Enyim.Caching
                 var nodeKeys = slice.Value;
                 var mget = this.pool.OperationFactory.MultiGet(nodeKeys);
 
-                // run gets in parallel
+                // we'll use the delegate's BeginInvoke/EndInvoke to run the gets parallel
                 var action = new Func<IOperation, IOperationResult>(node.Execute);
+                var mre = new ManualResetEvent(false);
+                handles.Add(mre);
 
                 //execute the mgets in parallel
-                tasks.Add(Task.Run(() =>
+                action.BeginInvoke(mget, iar =>
                 {
                     try
                     {
-                        if (action(mget).Success)
-                        {
-                            // deserialize the items in the dictionary
-                            foreach (var kvp in mget.Result)
+                        using (iar.AsyncWaitHandle)
+                            if (action.EndInvoke(iar).Success)
                             {
-                                string original;
-                                if (hashed.TryGetValue(kvp.Key, out original))
+                                // deserialize the items in the dictionary
+                                foreach (var kvp in mget.Result)
                                 {
-                                    var result = collector(mget, kvp);
+                                    string original;
+                                    if (hashed.TryGetValue(kvp.Key, out original))
+                                    {
+                                        var result = collector(mget, kvp);
 
-                                    // the lock will serialize the merge,
-                                    // but at least the commands were not waiting on each other
-                                    lock (retval) retval[original] = result;
+                                        // the lock will serialize the merge,
+                                        // but at least the commands were not waiting on each other
+                                        lock (retval) retval[original] = result;
+                                    }
                                 }
                             }
-                        }
                     }
                     catch (Exception e)
                     {
                         _logger.LogError("PerformMultiGet", e);
                     }
-                }));
+                    finally
+                    {
+                        // indicate that we finished processing
+                        mre.Set();
+                    }
+                }, nodeKeys);
             }
 
             // wait for all nodes to finish
-            if (tasks.Count > 0)
+            if (handles.Count > 0)
             {
-                Task.WaitAll(tasks.ToArray());
+                SafeWaitAllAndDispose(handles.ToArray());
             }
 
             return retval;
