@@ -102,34 +102,15 @@ namespace Enyim.Caching.Tests
         public async Task GetValueOrCreateAsyncTest()
         {
             var key = "GetValueOrCreateAsyncTest_" + Guid.NewGuid();
-            var posts1 = await _client.GetValueOrCreateAsync(
-                key, 
-                10, 
-                async () => await GenerateValue());
-            Assert.NotNull(posts1);
-
-            var posts2 = await _client.GetValueAsync<IEnumerable<BlogPost>>(key);
-            Assert.NotNull(posts2);
-
-            Assert.Equal(posts1.First().Title, posts2.First().Title);
+            await _client.GetValueOrCreateAsync(key, 10, () => GenerateValue());
+            var cacheValue = await _client.GetValueAsync<string>(key);
+            Assert.Equal(nameof(GetValueOrCreateAsyncTest), cacheValue);
         }
 
-        private Task<IEnumerable<BlogPost>> GenerateValue()
+        private Task<string> GenerateValue()
         {
-            var posts = new List<BlogPost>()
-            {
-                new BlogPost{ Title = "test title 1", Body = "test body 1" },
-                new BlogPost{ Title = "test title 2", Body = "test body 2" }
-            };
-
-            return Task.FromResult(posts.AsEnumerable());
+            return Task.FromResult(nameof(GetValueOrCreateAsyncTest));
         }
-    }
-
-    internal class BlogPost
-    {
-        public string Title { get; set; }
-        public string Body { get; set; }
     }
 }
 

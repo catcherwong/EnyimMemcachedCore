@@ -39,6 +39,7 @@ namespace Enyim.Caching.Tests
 
         protected IEnumerable<string> GetUniqueKeys(string prefix = null, int max = 5)
         {
+
             var keys = new List<string>(max);
             for (int i = 0; i < max; i++)
             {
