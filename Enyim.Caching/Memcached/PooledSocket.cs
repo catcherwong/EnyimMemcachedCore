@@ -46,7 +46,8 @@ namespace Enyim.Caching.Memcached
                 : (int)receiveTimeout.TotalMilliseconds;
 
             socket.ReceiveTimeout = rcv;
-            socket.SendTimeout = rcv;            
+            socket.SendTimeout = rcv;
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
             ConnectWithTimeout(socket, endpoint, timeout);
 
@@ -58,21 +59,8 @@ namespace Enyim.Caching.Memcached
 
         private void ConnectWithTimeout(Socket socket, DnsEndPoint endpoint, int timeout)
         {
-            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
             var args = new SocketAsyncEventArgs();
-
-            //Workaround for https://github.com/dotnet/corefx/issues/26840
-            if (!IPAddress.TryParse(endpoint.Host, out var address))
-            {
-                address = Dns.GetHostAddresses(endpoint.Host).FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-                if (address == null)
-                    throw new ArgumentException(String.Format("Could not resolve host '{0}'.", endpoint.Host));
-                args.RemoteEndPoint = new IPEndPoint(address, endpoint.Port);
-            }
-            else
-            {
-                args.RemoteEndPoint = endpoint;
-            }
+            args.RemoteEndPoint = endpoint;
 
             using (var mres = new ManualResetEventSlim())
             {
