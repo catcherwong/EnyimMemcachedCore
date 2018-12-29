@@ -140,7 +140,7 @@ namespace Enyim.Caching
 
                     if (commandResult.Success)
                     {
-                        if (typeof(T).GetTypeCode() == TypeCode.Object && typeof(T) != typeof(Byte[]))
+                        if (typeof(T).GetTypeCode() == TypeCode.Object)
                         {
                             result.Success = true;
                             result.Value = this.transcoder.Deserialize<T>(command.Result);
