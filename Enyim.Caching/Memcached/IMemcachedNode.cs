@@ -9,7 +9,7 @@ namespace Enyim.Caching.Memcached
 {
     public interface IMemcachedNode : IDisposable
     {
-        EndPoint EndPoint { get; }
+        IPEndPoint EndPoint { get; }
         bool IsAlive { get; }
         bool Ping();
 

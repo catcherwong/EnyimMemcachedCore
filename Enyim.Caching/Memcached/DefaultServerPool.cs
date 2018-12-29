@@ -48,7 +48,7 @@ namespace Enyim.Caching.Memcached
 			catch { }
 		}
 
-		protected virtual IMemcachedNode CreateNode(EndPoint endpoint)
+		protected virtual IMemcachedNode CreateNode(IPEndPoint endpoint)
 		{
 			return new MemcachedNode(endpoint, this.configuration.SocketPool, _logger);
 		}
