@@ -1144,7 +1144,7 @@ namespace Enyim.Caching
             return Get<byte[]>(key);
         }
 
-        async Task<byte[]> IDistributedCache.GetAsync(string key, CancellationToken token = default(CancellationToken))
+        async Task<byte[]> IDistributedCache.GetAsync(string key)
         {
             _logger.LogInformation($"{nameof(IDistributedCache.GetAsync)}(\"{key}\")");
 
@@ -1164,7 +1164,7 @@ namespace Enyim.Caching
             }
         }
 
-        async Task IDistributedCache.SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default(CancellationToken))
+        async Task IDistributedCache.SetAsync(string key, byte[] value, DistributedCacheEntryOptions options)
         {
             _logger.LogInformation($"{nameof(IDistributedCache.SetAsync)}(\"{key}\")");
 
@@ -1192,7 +1192,7 @@ namespace Enyim.Caching
             }
         }
 
-        async Task IDistributedCache.RefreshAsync(string key, CancellationToken token = default(CancellationToken))
+        async Task IDistributedCache.RefreshAsync(string key)
         {
             _logger.LogInformation($"{nameof(IDistributedCache.RefreshAsync)}(\"{key}\")");
 
@@ -1212,7 +1212,7 @@ namespace Enyim.Caching
             Remove(key);
         }
 
-        async Task IDistributedCache.RemoveAsync(string key, CancellationToken token = default(CancellationToken))
+        async Task IDistributedCache.RemoveAsync(string key)
         {
             await RemoveAsync(key);
         }
