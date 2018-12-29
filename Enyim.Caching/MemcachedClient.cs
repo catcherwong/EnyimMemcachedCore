@@ -152,14 +152,7 @@ namespace Enyim.Caching
                             if (tempResult != null)
                             {
                                 result.Success = true;
-                                if (typeof(T) == typeof(Guid))
-                                {
-                                    result.Value = (T)(object)new Guid((string)tempResult);
-                                }
-                                else
-                                {
-                                    result.Value = (T)tempResult;
-                                }
+                                result.Value = (T)tempResult;
                                 return result;
                             }
                         }
