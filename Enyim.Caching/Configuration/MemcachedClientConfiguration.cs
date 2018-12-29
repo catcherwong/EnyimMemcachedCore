@@ -7,8 +7,6 @@ using Enyim.Caching.Memcached.Protocol.Binary;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
-using System.Net.Sockets;
 
 namespace Enyim.Caching.Configuration
 {
@@ -43,19 +41,23 @@ namespace Enyim.Caching.Configuration
             var options = optionsAccessor.Value;
             if ((options == null || options.Servers.Count == 0) && configuration != null)
             {
-                var section = configuration.GetSection("enyimMemcached");
+                var section = configuration.GetSection("enyimMemcached");                
                 if (section.Exists())
                 {
-                    section.Bind(options);
+                    section.Bind(options);                    
                 }
                 else
                 {
                     _logger.LogWarning($"No enyimMemcached setting in appsetting.json. Use default configuration");
                     options.AddDefaultServer();
-                }
+                }                
             }
 
-            ConfigureServers(options);
+            Servers = new List<DnsEndPoint>();
+            foreach (var server in options.Servers)
+            {
+                Servers.Add(new DnsEndPoint(server.Address, server.Port));
+            }
 
             SocketPool = new SocketPoolConfiguration();
             if (options.SocketPool != null)
@@ -167,35 +169,6 @@ namespace Enyim.Caching.Configuration
             if (options.NodeLocatorFactory != null)
             {
                 NodeLocatorFactory = options.NodeLocatorFactory;
-            }
-        }
-
-        private void ConfigureServers(MemcachedClientOptions options)
-        {
-            Servers = new List<DnsEndPoint>();
-            foreach (var server in options.Servers)
-            {
-                if (!IPAddress.TryParse(server.Address, out var address))
-                {
-                    var ip = Dns.GetHostAddresses(server.Address)
-                        .FirstOrDefault(i => i.AddressFamily == AddressFamily.InterNetwork)?.ToString();
-
-                    if (ip == null)
-                    {
-                        _logger.LogError($"Could not resolve host '{server.Address}'.");
-                    }
-                    else
-                    {
-                        _logger.LogInformation($"Memcached server address - {server.Address }({ip}):{server.Port}");
-                        server.Address = ip;
-                    }
-                }
-                else
-                {
-                    _logger.LogInformation($"Memcached server address - {server.Address }:{server.Port}");
-                }
-
-                Servers.Add(new DnsEndPoint(server.Address, server.Port));
             }
         }
 
