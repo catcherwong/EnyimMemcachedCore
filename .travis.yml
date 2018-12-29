@@ -25,7 +25,6 @@ branches:
     - migrate-tests-to-core
 script:
   - ./build.sh
-  - ./run-test.sh
 #notifications:
 #  webhooks:
 #    secure: ""
