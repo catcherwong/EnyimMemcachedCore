@@ -44,7 +44,6 @@ namespace Enyim.Caching.Memcached
             if (socketPoolConfig.ConnectionTimeout.TotalMilliseconds >= Int32.MaxValue)
                 throw new InvalidOperationException("ConnectionTimeout must be < Int32.MaxValue");
 
-            _logger = logger;
             this.internalPoolImpl = new InternalPoolImpl(this, socketPoolConfig, _logger);
         }
 
