@@ -75,9 +75,9 @@ namespace Enyim.Caching.Memcached.Protocol.Binary
         private bool? asyncLoopState;
         private Action<bool> afterAsyncRead;
 
-        protected internal override ValueTask<IOperationResult> ReadResponseAsync(PooledSocket socket)
+        protected internal override async ValueTask<IOperationResult> ReadResponseAsync(PooledSocket socket)
         {
-            return new ValueTask<IOperationResult>(ReadResponse(socket));
+            return ReadResponse(socket);
         }
 
         protected internal override bool ReadResponseAsync(PooledSocket socket, Action<bool> next)

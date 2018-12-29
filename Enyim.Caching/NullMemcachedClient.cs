@@ -109,12 +109,12 @@ namespace Enyim.Caching
             var result = new DefaultGetOperationResultFactory<T>().Create();
             result.Success = false;
             result.Value = default(T);
-            return await Task.FromResult(result);
+            return result;
         }
 
         public async Task<T> GetValueAsync<T>(string key)
         {
-            return await Task.FromResult(default(T));
+            return default(T);
         }
 
         public IDictionary<string, CasResult<object>> GetWithCas(IEnumerable<string> keys)
@@ -209,12 +209,12 @@ namespace Enyim.Caching
 
         public async Task<bool> StoreAsync(StoreMode mode, string key, object value, TimeSpan validFor)
         {
-            return await Task.FromResult(false);
+            return false;
         }
 
         public async Task<bool> StoreAsync(StoreMode mode, string key, object value, DateTime expiresAt)
         {
-            return await Task.FromResult(false);
+            return false;
         }
 
         public bool Store(StoreMode mode, string key, object value, DateTime expiresAt)
