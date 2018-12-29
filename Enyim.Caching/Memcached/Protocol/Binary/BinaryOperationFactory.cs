@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 
 namespace Enyim.Caching.Memcached.Protocol.Binary
 {
@@ -9,16 +8,9 @@ namespace Enyim.Caching.Memcached.Protocol.Binary
 	/// </summary>
 	public class BinaryOperationFactory : IOperationFactory
 	{
-        private readonly ILogger _logger;
-
-        public BinaryOperationFactory(ILogger logger)
-        {
-            _logger = logger;
-        }
-
-        IGetOperation IOperationFactory.Get(string key)
+		IGetOperation IOperationFactory.Get(string key)
 		{
-			return new GetOperation(key, _logger);
+			return new GetOperation(key);
 		}
 
 		IMultiGetOperation IOperationFactory.MultiGet(IList<string> keys)

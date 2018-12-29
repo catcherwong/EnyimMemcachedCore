@@ -6,7 +6,6 @@ using System.Threading;
 using Enyim.Caching.Configuration;
 using Enyim.Collections;
 using System.Security;
-using Microsoft.Extensions.Logging;
 
 namespace Enyim.Caching.Memcached.Protocol.Binary
 {
@@ -17,19 +16,17 @@ namespace Enyim.Caching.Memcached.Protocol.Binary
 	{
 		ISaslAuthenticationProvider authenticationProvider;
 		IMemcachedClientConfiguration configuration;
-        private readonly ILogger _logger;
 
-		public BinaryPool(IMemcachedClientConfiguration configuration, ILogger logger)
-			: base(configuration, new BinaryOperationFactory(logger), logger)
+		public BinaryPool(IMemcachedClientConfiguration configuration)
+			: base(configuration, new BinaryOperationFactory())
 		{
 			this.authenticationProvider = GetProvider(configuration);
 			this.configuration = configuration;
-            _logger = logger;
-        }
+		}
 
 		protected override IMemcachedNode CreateNode(IPEndPoint endpoint)
 		{
-			return new BinaryNode(endpoint, this.configuration.SocketPool, this.authenticationProvider, _logger);
+			return new BinaryNode(endpoint, this.configuration.SocketPool, this.authenticationProvider);
 		}
 
 		private static ISaslAuthenticationProvider GetProvider(IMemcachedClientConfiguration configuration)
