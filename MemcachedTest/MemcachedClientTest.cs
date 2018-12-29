@@ -1,7 +1,9 @@
 using System;
+using System.Net;
+using System.Threading;
 using Enyim.Caching;
+using Enyim.Caching.Configuration;
 using Enyim.Caching.Memcached;
-using Enyim.Caching.Memcached.Transcoders;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
@@ -24,16 +26,11 @@ namespace MemcachedTest
             {
                 options.AddServer("memcached", 11211);
                 options.Protocol = protocol;
-                //if (useBinaryFormatterTranscoder)
-                //{
-                //    options.Transcoder = "BinaryFormatterTranscoder";
-                //}
+                if (useBinaryFormatterTranscoder)
+                {
+                    options.Transcoder = "BinaryFormatterTranscoder";
+                }
             });
-            if(useBinaryFormatterTranscoder)
-            {
-                services.AddSingleton<ITranscoder,BinaryFormatterTranscoder>();
-            }
-
             services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Error).AddConsole());
 
             IServiceProvider serviceProvider = services.BuildServiceProvider();
