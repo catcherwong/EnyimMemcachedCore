@@ -516,15 +516,7 @@ namespace Enyim.Caching.Memcached
 
         protected internal virtual PooledSocket CreateSocket()
         {
-            try
-            {
-                return new PooledSocket(this.endPoint, this.config.ConnectionTimeout, this.config.ReceiveTimeout, _logger);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(new EventId (this.GetHashCode(), nameof(MemcachedNode) ), ex, $"Create {nameof(PooledSocket)}");
-                throw;
-            }
+            return new PooledSocket(this.endPoint, this.config.ConnectionTimeout, this.config.ReceiveTimeout, _logger);
         }
 
         //protected internal virtual PooledSocket CreateSocket(IPEndPoint endpoint, TimeSpan connectionTimeout, TimeSpan receiveTimeout)
