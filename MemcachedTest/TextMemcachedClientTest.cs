@@ -13,6 +13,7 @@ namespace MemcachedTest
 		{
 			using (MemcachedClient client = GetClient(MemcachedProtocol.Text))
 			{               
+
                 Assert.True(client.Store(StoreMode.Set, "VALUE", "100"), "Initialization failed");
 
 				Assert.Equal((ulong)102, client.Increment("VALUE", 0, 2));
