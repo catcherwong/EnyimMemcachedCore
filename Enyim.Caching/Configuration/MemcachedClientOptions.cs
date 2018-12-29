@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Enyim.Caching.Configuration
 {
-    public class MemcachedClientOptions : IOptions<MemcachedClientOptions>
+    public class MemcachedClientOptions
     {
         public MemcachedProtocol Protocol { get; set; } = MemcachedProtocol.Binary;
 
@@ -20,8 +20,6 @@ namespace Enyim.Caching.Configuration
         public string KeyTransformer { get; set; }
 
         public ITranscoder Transcoder { get; set; }
-
-        public MemcachedClientOptions Value => this;
 
         public void AddServer(string address, int port)
         {
