@@ -66,12 +66,13 @@ namespace Enyim.Caching.Memcached
             }
 
             ArraySegment<byte> data;
-            // TypeCode.DBNull is 2
-            TypeCode code = value == null ? (TypeCode)2 : Type.GetTypeCode(value.GetType());
+            TypeCode code = value.GetType().GetTypeCode();
+
+            //TypeCode code = value == null ? TypeCode.DBNull : Type.GetTypeCode(value.GetType());
 
             switch (code)
             {
-                case (TypeCode)2: data = this.SerializeNull(); break; // TypeCode.DBNull
+                //case TypeCode.DBNull: data = this.SerializeNull(); break;
                 case TypeCode.String: data = this.SerializeString(value.ToString()); break;
                 case TypeCode.Boolean: data = this.SerializeBoolean((Boolean)value); break;
                 case TypeCode.SByte: data = this.SerializeSByte((SByte)value); break;
@@ -144,7 +145,7 @@ namespace Enyim.Caching.Memcached
                             ? null
                             : DeserializeString(data);
 
-                case (TypeCode)2: return null; // TypeCode.DBNull
+                //case TypeCode.DBNull: return null;
                 case TypeCode.String: return this.DeserializeString(data);
                 case TypeCode.Boolean: return this.DeserializeBoolean(data);
                 case TypeCode.Int16: return this.DeserializeInt16(data);
