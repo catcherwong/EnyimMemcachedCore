@@ -210,13 +210,5 @@ namespace Enyim.Caching
         {
             throw new NotImplementedException();
         }
-
-        public void Add(string key, object value, int cacheSeconds)
-        {
-        }
-
-        public async Task AddAsync(string key, object value, int cacheSeconds)
-        {
-        }
     }
 }
