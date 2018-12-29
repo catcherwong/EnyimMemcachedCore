@@ -120,11 +120,6 @@ namespace Enyim.Caching.Configuration
                 }                
             }
 
-            if(NodeLocator == null)
-            {
-                NodeLocator = options.Servers.Count > 1 ? typeof(DefaultNodeLocator) : typeof(SingleNodeLocator);
-            }
-
             if(options.Transcoder != null)
             {
                 _transcoder = options.Transcoder;
