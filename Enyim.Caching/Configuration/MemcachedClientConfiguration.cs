@@ -16,7 +16,7 @@ namespace Enyim.Caching.Configuration
     {
         // these are lazy initialized in the getters
         private Type nodeLocator;
-        private ITranscoder _transcoder;
+        private ITranscoder transcoder;
         private IMemcachedKeyTransformer keyTransformer;
         private ILogger<MemcachedClient> _logger;
 
@@ -95,11 +95,6 @@ namespace Enyim.Caching.Configuration
                     _logger.LogError(new EventId(), ex, $"Unable to load '{options.KeyTransformer}' KeyTransformer");
                 }                
             }
-
-            if(options.Transcoder != null)
-            {
-                _transcoder = options.Transcoder;
-            }
         }   
 
 		/// <summary>
@@ -170,8 +165,8 @@ namespace Enyim.Caching.Configuration
 		/// </summary>
 		public ITranscoder Transcoder
 		{
-			get { return _transcoder ?? (_transcoder = new DefaultTranscoder()); }
-			set { _transcoder = value; }
+			get { return this.transcoder ?? (this.transcoder = new DefaultTranscoder()); }
+			set { this.transcoder = value; }
 		}
 
 		/// <summary>
