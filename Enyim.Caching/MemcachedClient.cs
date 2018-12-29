@@ -1002,29 +1002,10 @@ namespace Enyim.Caching
         protected const int MaxSeconds = 60 * 60 * 24 * 30;
         protected static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1);
 
-        protected static uint GetExpiration(
-            TimeSpan? validFor, 
-            DateTime? expiresAt = null, 
-            DateTimeOffset? absoluteExpiration = null,
-            TimeSpan? relativeToNow = null)
+        protected static uint GetExpiration(TimeSpan? validFor, DateTime? expiresAt)
         {
             if (validFor != null && expiresAt != null)
                 throw new ArgumentException("You cannot specify both validFor and expiresAt.");
-
-            if(validFor == null && expiresAt == null && absoluteExpiration == null && relativeToNow == null)
-            {
-                return 0;
-            }
-
-            if(absoluteExpiration != null)
-            {
-                return (uint)absoluteExpiration.Value.ToUnixTimeSeconds();
-            }
-
-            if(relativeToNow != null)
-            {
-                return (uint)(DateTimeOffset.UtcNow + relativeToNow.Value).ToUnixTimeSeconds();
-            }
 
             // convert timespans to absolute dates
             if (validFor != null)
@@ -1127,7 +1108,7 @@ namespace Enyim.Caching
                 };
 
                 ulong cas = 0;
-                var expires = MemcachedClient.GetExpiration(options.SlidingExpiration, null, options.AbsoluteExpiration, options.AbsoluteExpirationRelativeToNow);
+                var expires = MemcachedClient.GetExpiration(options.SlidingExpiration.Value, null);
                 var command = this.pool.OperationFactory.Store(StoreMode.Set, key, item, expires, cas);
                 node.Execute(command);
             }
@@ -1148,7 +1129,7 @@ namespace Enyim.Caching
                 };
 
                 ulong cas = 0;
-                var expires = MemcachedClient.GetExpiration(options.SlidingExpiration, null, options.AbsoluteExpiration, options.AbsoluteExpirationRelativeToNow);
+                var expires = MemcachedClient.GetExpiration(options.SlidingExpiration.Value, null);
                 var command = this.pool.OperationFactory.Store(StoreMode.Set, key, item, expires, cas);
                 await node.ExecuteAsync(command);
             }
