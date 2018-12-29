@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +11,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace Enyim.Caching.Memcached
 {
@@ -204,21 +204,6 @@ namespace Enyim.Caching.Memcached
             {
                 this.isAlive = false;
 
-                throw;
-            }
-        }
-
-        public int ReadByteAsync()
-        {
-            this.CheckDisposed();
-
-            try
-            {
-                return this.inputStream.ReadByte();
-            }
-            catch (IOException)
-            {
-                this.isAlive = false;
                 throw;
             }
         }
