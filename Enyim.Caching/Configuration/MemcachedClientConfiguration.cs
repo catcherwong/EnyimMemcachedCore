@@ -44,10 +44,18 @@ namespace Enyim.Caching.Configuration
                 configuration.GetSection("enyimMemcached").Bind(options);
             }
 
-            Servers = new List<DnsEndPoint>();
+            Servers = new List<EndPoint>();
             foreach (var server in options.Servers)
             {
-                Servers.Add(new DnsEndPoint(server.Address, server.Port));
+                IPAddress address;
+                if (IPAddress.TryParse(server.Address, out address))
+                {
+                    Servers.Add(new IPEndPoint(address, server.Port));
+                }
+                else
+                {
+                    Servers.Add(new DnsEndPoint(server.Address, server.Port));
+                }
             }
 
             SocketPool = new SocketPoolConfiguration();
@@ -179,13 +187,13 @@ namespace Enyim.Caching.Configuration
         /// <param name="port">The port number of the memcached instance.</param>
         public void AddServer(string host, int port)
         {
-            this.Servers.Add(new DnsEndPoint(host, port));
+            this.Servers.Add(ConfigurationHelper.ResolveToEndPoint(host, port));
         }
 
         /// <summary>
         /// Gets a list of <see cref="T:IPEndPoint"/> each representing a Memcached server in the pool.
         /// </summary>
-        public IList<DnsEndPoint> Servers { get; private set; }
+        public IList<EndPoint> Servers { get; private set; }
 
         /// <summary>
         /// Gets the configuration of the socket pool.
@@ -242,7 +250,7 @@ namespace Enyim.Caching.Configuration
 
         #region [ interface                     ]
 
-        IList<System.Net.DnsEndPoint> IMemcachedClientConfiguration.Servers
+        IList<System.Net.EndPoint> IMemcachedClientConfiguration.Servers
         {
             get { return this.Servers; }
         }

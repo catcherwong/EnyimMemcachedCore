@@ -20,7 +20,7 @@ namespace Enyim.Caching.Memcached.Protocol.Binary
 		ISaslAuthenticationProvider authenticationProvider;
 
 		public BinaryNode(
-            DnsEndPoint endpoint, 
+            EndPoint endpoint, 
             ISocketPoolConfiguration config, 
             ISaslAuthenticationProvider authenticationProvider,
             ILogger logger)

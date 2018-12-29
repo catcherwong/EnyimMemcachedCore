@@ -48,7 +48,7 @@ namespace Enyim.Caching.Memcached
 			catch { }
 		}
 
-		protected virtual IMemcachedNode CreateNode(DnsEndPoint endpoint)
+		protected virtual IMemcachedNode CreateNode(EndPoint endpoint)
 		{
 			return new MemcachedNode(endpoint, this.configuration.SocketPool, _logger);
 		}
@@ -207,9 +207,9 @@ namespace Enyim.Caching.Memcached
 		void IServerPool.Start()
 		{
 			this.allNodes = this.configuration.Servers.
-								Select(ep =>
+								Select(ip =>
 								{
-									var node = this.CreateNode(ep);
+									var node = this.CreateNode(ip);
 									node.Failed += this.NodeFail;
 
 									return node;
