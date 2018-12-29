@@ -49,11 +49,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(configurationSection));
             }
 
-            if(!configurationSection.Exists())
-            {
-                throw new ArgumentNullException($"{configurationSection.Key} in appsettings.json");
-            }
-
             return AddEnyimMemcachedInternal(services, s => s.Configure<MemcachedClientOptions>(configurationSection));
         }
 
@@ -69,13 +64,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            var section = configuration.GetSection(sectionKey);
-            if (!section.Exists())
-            {
-                throw new ArgumentNullException($"{sectionKey} in appsettings.json");
-            }
-
-            return AddEnyimMemcachedInternal(services, s => s.Configure<MemcachedClientOptions>(section));
+            return AddEnyimMemcachedInternal(services, s => s.Configure<MemcachedClientOptions>(configuration.GetSection(sectionKey)));
         }
 
         private static IServiceCollection AddEnyimMemcachedInternal(IServiceCollection services, Action<IServiceCollection> configure)
@@ -92,6 +81,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IDistributedCache>(factory => factory.GetService<MemcachedClient>());
 
             return services;
-        }        
+        }
     }
 }

@@ -30,8 +30,6 @@ namespace Enyim.Caching.Configuration
             Servers.Add(new Server { Address = address, Port = port });
         }
 
-        public void AddDefaultServer() => AddServer("memcached", 11211);    
-
         public void AddPlainTextAuthenticator(string zone, string userName, string password)
         {
             Authentication = new Authentication
