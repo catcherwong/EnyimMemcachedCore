@@ -59,21 +59,28 @@ namespace Enyim.Caching.Memcached
 
         private void ConnectWithTimeout(Socket socket, DnsEndPoint endpoint, int timeout)
         {
+            var completed = new AutoResetEvent(false);
+
             var args = new SocketAsyncEventArgs();
             args.RemoteEndPoint = endpoint;
+            args.Completed += OnConnectCompleted;
+            args.UserToken = completed;
+            socket.ConnectAsync(args);
 
-            using (var mres = new ManualResetEventSlim())
+            if (!completed.WaitOne(timeout) || !socket.Connected)
             {
-                args.Completed += (s, e) => mres.Set();
-                if (socket.ConnectAsync(args))
+                using (socket)
                 {
-                    if(!mres.Wait(timeout))
-                    {
-                        throw new TimeoutException("Could not connect to " + endpoint);
-                    }
+                    throw new TimeoutException("Could not connect to " + endpoint);
                 }
-            }           
-        }        
+            }            
+        }
+
+        private void OnConnectCompleted(object sender, SocketAsyncEventArgs args)
+        {
+            EventWaitHandle handle = (EventWaitHandle)args.UserToken;
+            handle.Set();
+        }
 
         public Action<PooledSocket> CleanupCallback { get; set; }
 
