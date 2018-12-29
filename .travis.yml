@@ -17,7 +17,9 @@ os:
 branches:
   only:
     - master
-    - dotnetcore
+    - release
+    - dev
+    - migrate-tests-to-core
 script:
   - ./build.sh
   - ./run-test.sh
