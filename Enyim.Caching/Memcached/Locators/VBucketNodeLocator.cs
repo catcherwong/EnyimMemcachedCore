@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using System.Net;
+using System.Web.Script.Serialization;
 using System.Collections.ObjectModel;
 using System.Web;
 using Enyim.Caching.Configuration;

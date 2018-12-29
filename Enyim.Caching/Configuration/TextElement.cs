@@ -1,42 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Security.Cryptography;
-using System.Net;
-using System.Web.Script.Serialization;
-using System.Collections.ObjectModel;
-using System.Web;
+using System;
+using System.Configuration;
 
 namespace Enyim.Caching.Configuration
 {
-	public interface IVBucketConfiguration
+	/// <summary>
+	/// CDATA config element
+	/// </summary>
+	public sealed class TextElement : ConfigurationElement
 	{
-		HashAlgorithm CreateHashAlgorithm();
-		IList<IPEndPoint> Servers { get; }
-		IList<VBucket> Buckets { get; }
-	}
+		public string Content { get; set; }
 
-	public struct VBucket
-	{
-		private int master;
-		private int[] replicas;
-
-		public VBucket(int master, int[] replicas)
+		protected override void DeserializeElement(System.Xml.XmlReader reader, bool serializeCollectionKey)
 		{
-			this.master = master;
-			this.replicas = replicas;
+			this.Content = reader.ReadElementContentAsString();
 		}
-
-		public int Master { get { return this.master; } }
-		public int[] Replicas { get { return this.replicas; } }
 	}
 }
 
 #region [ License information          ]
 /* ************************************************************
  * 
- *    Copyright (c) 2010 Attila Kiskó, enyim.com
+ *    Copyright (c) 2010 Attila Kisk�, enyim.com
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.

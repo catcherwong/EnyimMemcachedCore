@@ -11,23 +11,41 @@ namespace Enyim.Caching.Configuration
 	/// <summary>
 	/// This element is used to define locator/transcoder/keyTransformer instances. It also provides custom initializations for them using a factory.
 	/// </summary>
-	/// <typeparam name="TFactory"></typeparam>
-	public class FactoryElement<TFactory> : ConfigurationElement
-		where TFactory : class, IProvider
+	/// <typeparam name="T"></typeparam>
+	public sealed class ProviderElement<T> : ConfigurationElement
+		where T : class
 	{
-		protected readonly Dictionary<string, string> Parameters = new Dictionary<string, string>();
-		private TFactory instance;
-
-		protected virtual bool IsOptional { get { return false; } }
+		// TODO make this element play nice with the configuration system (allow saving, etc.)
+		private Dictionary<string, string> parameters = new Dictionary<string, string>();
+		private IProviderFactory<T> factoryInstance;
 
 		/// <summary>
-		/// Gets or sets the type of the factory.
+		/// Gets or sets the type of the provider.
 		/// </summary>
-		[ConfigurationProperty("factory"), TypeConverter(typeof(TypeNameConverter))]
+		[ConfigurationProperty("type", IsRequired = false), TypeConverter(typeof(TypeNameConverter))]
+		public Type Type
+		{
+			get { return (Type)base["type"]; }
+			set
+			{
+				ConfigurationHelper.CheckForInterface(value, typeof(T));
+				base["type"] = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the type of the provider factory.
+		/// </summary>
+		[ConfigurationProperty("factory", IsRequired = false), TypeConverter(typeof(TypeNameConverter))]
 		public Type Factory
 		{
 			get { return (Type)base["factory"]; }
-			set { base["factory"] = value; }
+			set
+			{
+				ConfigurationHelper.CheckForInterface(value, typeof(IProviderFactory<T>));
+
+				base["factory"] = value;
+			}
 		}
 
 		protected override bool OnDeserializeUnrecognizedAttribute(string name, string value)
@@ -35,7 +53,7 @@ namespace Enyim.Caching.Configuration
 			ConfigurationProperty property = new ConfigurationProperty(name, typeof(string), value);
 			base[property] = value;
 
-			this.Parameters[name] = value;
+			this.parameters[name] = value;
 
 			return true;
 		}
@@ -44,37 +62,49 @@ namespace Enyim.Caching.Configuration
 		/// Creates the provider by using the factory (if present) or directly instantiating by type name
 		/// </summary>
 		/// <returns></returns>
-		public TFactory CreateInstance()
+		public T CreateInstance()
 		{
 			//check if we have a factory
-			if (this.instance == null)
+			if (this.factoryInstance == null)
 			{
 				var type = this.Factory;
-				if (type == null)
+				if (type != null)
 				{
-					if (this.IsOptional || !this.ElementInformation.IsPresent)
-						return null;
-
-					throw new ConfigurationErrorsException("factory must be defined");
+					this.factoryInstance = (IProviderFactory<T>)FastActivator.Create(type);
+					this.factoryInstance.Initialize(this.parameters);
 				}
-
-				this.instance = (TFactory)FastActivator.Create(type);
-				this.instance.Initialize(this.Parameters);
 			}
 
-			return this.instance;
-		}
-	}
+			// no factory, use the provider type
+			if (this.factoryInstance == null)
+			{
+				var type = this.Type;
 
-	public class OptionalFactoryElement<TResult> : FactoryElement<TResult>
-		where TResult : class, IProvider
-	{
-		protected override bool IsOptional
+				if (type == null)
+					return null;
+
+				return (T)FastActivator.Create(type);
+			}
+
+			return factoryInstance.Create();
+		}
+
+		[ConfigurationProperty("data", IsRequired = false)]
+		public TextElement Content
 		{
-			get { return true; }
+			get { return (TextElement)base["data"]; }
+			set { base["data"] = value; }
+		}
+
+		protected override void PostDeserialize()
+		{
+			base.PostDeserialize();
+
+			var c = this.Content;
+			if (c != null)
+				this.parameters[String.Empty] = c.Content;
 		}
 	}
-
 }
 
 #region [ License information          ]

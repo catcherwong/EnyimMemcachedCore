@@ -7,4 +7,3 @@ build/output/*
 _ReSharper*
 packages/*/
 /publish/packages
-/Enyim.Caching/project.lock.json
