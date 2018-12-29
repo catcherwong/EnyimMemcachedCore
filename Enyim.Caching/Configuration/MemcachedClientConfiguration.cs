@@ -38,10 +38,7 @@ namespace Enyim.Caching.Configuration
             Servers = new List<EndPoint>();
             foreach (var server in options.Servers)
             {
-                _logger.LogDebug($"Call ResolveToEndPoint(\"{server.Addess}\", {server.Port})");
-                var endpoint = ConfigurationHelper.ResolveToEndPoint(server.Addess, server.Port);
-                _logger.LogDebug($"Result of ResolveToEndPoint(): {endpoint}");
-                Servers.Add(endpoint);
+                Servers.Add(ConfigurationHelper.ResolveToEndPoint(server.Addess, server.Port));
             }
             SocketPool = options.SocketPool;
             Protocol = options.Protocol;
