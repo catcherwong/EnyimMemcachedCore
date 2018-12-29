@@ -53,7 +53,7 @@ namespace Enyim.Caching.Memcached
             this.socket = socket;
             this.endpoint = endpoint;
 
-            this.inputStream = new NetworkStream(socket);            
+            this.inputStream = new BasicNetworkStream(socket);            
         }
 
         private void ConnectWithTimeout(Socket socket, DnsEndPoint endpoint, int timeout)
