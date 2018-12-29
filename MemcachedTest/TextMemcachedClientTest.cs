@@ -10,10 +10,9 @@ namespace MemcachedTest
 		[Fact]
 		public void IncrementTest()
 		{
-			using (MemcachedClient client = GetClient(MemcachedProtocol.Text))
-			{               
-
-                Assert.True(client.Store(StoreMode.Set, "VALUE", "100"), "Initialization failed");
+			using (MemcachedClient client = GetClient())
+			{
+				Assert.True(client.Store(StoreMode.Set, "VALUE", "100"), "Initialization failed");
 
 				Assert.Equal((ulong)102, client.Increment("VALUE", 0, 2));
 				Assert.Equal((ulong)112, client.Increment("VALUE", 0, 10));
@@ -23,7 +22,7 @@ namespace MemcachedTest
 		[Fact]
 		public void DecrementTest()
 		{
-			using (MemcachedClient client = GetClient(MemcachedProtocol.Text))
+			using (MemcachedClient client = GetClient())
 			{
 				client.Store(StoreMode.Set, "VALUE", "100");
 
@@ -60,7 +59,7 @@ namespace MemcachedTest
 				Assert.Equal(r5.Result, "baz");
 			}
 		}
-    }
+	}
 }
 
 #region [ License information          ]
