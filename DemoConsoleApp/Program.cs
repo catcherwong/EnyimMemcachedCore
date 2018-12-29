@@ -21,7 +21,6 @@ namespace DemonConsoleApp
             loggerFactory.AddConsole(LogLevel.Debug);
             memcached.AddAsync("test", "Hello, World", 60).Wait();
             Console.WriteLine(memcached.GetAsync<string>("test").Result.Value);
-            Console.Read();
         }
     }
 }
