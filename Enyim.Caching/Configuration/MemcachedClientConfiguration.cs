@@ -54,21 +54,18 @@ namespace Enyim.Caching.Configuration
             SocketPool = options.SocketPool;
             Protocol = options.Protocol;
 
-            if (options.Authentication != null && !string.IsNullOrEmpty(options.Authentication.Type))
+            if (options.Authentication != null)
             {
                 try
                 {
                     var authenticationType = Type.GetType(options.Authentication.Type);
                     if (authenticationType != null)
                     {
-                        _logger.LogDebug($"Authentication type is {authenticationType}.");
-
                         Authentication = new AuthenticationConfiguration();
                         Authentication.Type = authenticationType;
                         foreach (var parameter in options.Authentication.Parameters)
                         {
                             Authentication.Parameters[parameter.Key] = parameter.Value;
-                            _logger.LogDebug($"Authentication {parameter.Key} is '{parameter.Value}'.");
                         }
                     }
                     else
