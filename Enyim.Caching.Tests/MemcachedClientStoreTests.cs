@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
 using Enyim.Caching.Memcached;
 using Enyim.Caching.Memcached.Results;
 using Enyim.Caching.Memcached.Results.StatusCodes;
-using Xunit;
 
 namespace Enyim.Caching.Tests
 {
+
+	[TestFixture(Description = "MemcachedClient Store Tests")]
 	public class MemcachedClientStoreTests : MemcachedClientTestsBase
 	{
 
-		[Fact]
+		[Test]
 		public void When_Storing_Item_With_New_Key_And_StoreMode_Add_Result_Is_Successful()
 		{
 			var result = Store(StoreMode.Add);
@@ -20,7 +22,7 @@ namespace Enyim.Caching.Tests
 
 		}
 
-		[Fact]
+		[Test]
 		public void When_Storing_Item_With_Existing_Key_And_StoreMode_Add_Result_Is_Not_Successful()
 		{
 			var key = GetUniqueKey("store");
@@ -31,16 +33,16 @@ namespace Enyim.Caching.Tests
 			StoreAssertFail(result);
 		}
 
-		[Fact]
+		[Test]
 		public void When_Storing_Item_With_New_Key_And_StoreMode_Replace_Result_Is_Not_Successful()
 		{
 			var result = Store(StoreMode.Replace);
-			Assert.Equal((int)StatusCodeEnums.NotFound, result.StatusCode);
+			Assert.That(result.StatusCode, Is.EqualTo((int)StatusCodeEnums.NotFound), "Invalid status code");
 			StoreAssertFail(result);
 
 		}
 
-		[Fact]
+		[Test]
 		public void When_Storing_Item_With_Existing_Key_And_StoreMode_Replace_Result_Is_Successful()
 		{
 			var key = GetUniqueKey("store");
@@ -51,7 +53,7 @@ namespace Enyim.Caching.Tests
 			StoreAssertPass(result);
 		}
 
-		[Fact]
+		[Test]
 		public void When_Storing_Item_With_New_Key_And_StoreMode_Set_Result_Is_Successful()
 		{
 			var result = Store(StoreMode.Set);
@@ -59,7 +61,7 @@ namespace Enyim.Caching.Tests
 
 		}
 
-		[Fact]
+		[Test]
 		public void When_Storing_Item_With_Existing_Key_And_StoreMode_Set_Result_Is_Successful()
 		{
 			var key = GetUniqueKey("store");
