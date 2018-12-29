@@ -1,5 +1,4 @@
-﻿using Enyim.Caching;
-using Enyim.Caching.Configuration;
+﻿using Enyim.Caching.Configuration;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -7,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Enyim.Caching
 {
     public static class EnyimMemcachedServiceCollectionExtensions
     {
