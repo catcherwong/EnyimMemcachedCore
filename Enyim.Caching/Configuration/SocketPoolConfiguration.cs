@@ -19,7 +19,16 @@ namespace Enyim.Caching.Configuration
 		int ISocketPoolConfiguration.MinPoolSize
 		{
 			get { return this.minPoolSize; }
-			set { this.minPoolSize = value; }
+			set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("value", "MinPoolSize must be >= 0!");
+
+				if (value > this.maxPoolSize)
+					throw new ArgumentOutOfRangeException("value", "MinPoolSize must be <= MaxPoolSize!");
+
+				this.minPoolSize = value;
+			}
 		}
 
 		/// <summary>
@@ -30,7 +39,13 @@ namespace Enyim.Caching.Configuration
 		int ISocketPoolConfiguration.MaxPoolSize
 		{
 			get { return this.maxPoolSize; }
-			set { this.maxPoolSize = value; }
+			set
+			{
+				if (value < this.minPoolSize)
+					throw new ArgumentOutOfRangeException("value", "MaxPoolSize must be >= MinPoolSize!");
+
+				this.maxPoolSize = value;
+			}
 		}
 
 		TimeSpan ISocketPoolConfiguration.ConnectionTimeout
