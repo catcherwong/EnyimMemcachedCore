@@ -252,10 +252,5 @@ namespace Enyim.Caching
         {
             return generator;
         }
-
-        public Task FlushAllAsync()
-        {
-            return Task.CompletedTask;
-        }
     }
 }
