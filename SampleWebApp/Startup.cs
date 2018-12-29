@@ -41,7 +41,10 @@ namespace SampleWebApp
             }
             else
             {
-                services.AddEnyimMemcached(Configuration.GetSection("enyimMemcached"));
+                services.AddEnyimMemcached(options =>
+                {
+                    Configuration.GetSection("enyimMemcached").Bind(options);
+                });
             }
         }        
 
