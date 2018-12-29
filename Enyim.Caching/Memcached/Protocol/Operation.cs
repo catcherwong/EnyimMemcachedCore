@@ -10,6 +10,8 @@ namespace Enyim.Caching.Memcached.Protocol
     /// </summary>
     public abstract class Operation : IOperation
     {
+        private static readonly Enyim.Caching.ILog log = Enyim.Caching.LogManager.GetLogger(typeof(Operation));
+
         protected Operation() { }
 
         internal protected abstract IList<ArraySegment<byte>> GetBuffer();
