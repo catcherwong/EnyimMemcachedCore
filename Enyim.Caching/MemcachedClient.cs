@@ -11,7 +11,6 @@ using Enyim.Caching.Memcached.Results.Factories;
 using Enyim.Caching.Memcached.Results.Extensions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Enyim.Caching
 {
@@ -41,16 +40,15 @@ namespace Enyim.Caching
         protected IMemcachedKeyTransformer KeyTransformer { get { return this.keyTransformer; } }
         protected ITranscoder Transcoder { get { return this.transcoder; } }
 
-        public MemcachedClient(
-            ILogger<MemcachedClient> logger,
-            IMemcachedClientConfiguration configuration)
+        public MemcachedClient(ILogger<MemcachedClient> logger)
         {
             _logger = logger;
-
-            if(configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }            
+            IMemcachedClientConfiguration configuration = new MemcachedClientConfiguration(_logger); 
+            configuration.SocketPool.MinPoolSize = 5;
+            configuration.SocketPool.MaxPoolSize = 300;
+            configuration.SocketPool.ConnectionTimeout = new TimeSpan(0, 0, 3);
+            configuration.SocketPool.ReceiveTimeout = new TimeSpan(0, 0, 3);
+            configuration.SocketPool.DeadTimeout = new TimeSpan(0, 0, 3);
 
             this.keyTransformer = configuration.CreateKeyTransformer() ?? new DefaultKeyTransformer();
             this.transcoder = configuration.CreateTranscoder() ?? new DefaultTranscoder();
@@ -65,8 +63,7 @@ namespace Enyim.Caching
             RemoveOperationResultFactory = new DefaultRemoveOperationResultFactory();
         }      
 
-        [Obsolete]
-        private MemcachedClient(IServerPool pool, IMemcachedKeyTransformer keyTransformer, ITranscoder transcoder)
+        public MemcachedClient(IServerPool pool, IMemcachedKeyTransformer keyTransformer, ITranscoder transcoder)
         {
             if (pool == null) throw new ArgumentNullException("pool");
             if (keyTransformer == null) throw new ArgumentNullException("keyTransformer");

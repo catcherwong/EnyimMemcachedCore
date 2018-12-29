@@ -22,9 +22,15 @@ namespace Enyim.Caching.Configuration
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:MemcachedClientConfiguration"/> class.
 		/// </summary>
-		public MemcachedClientConfiguration()
+		public MemcachedClientConfiguration(ILogger<MemcachedClient> logger, string host = "memcached", int port = 11211)
 		{
-           
+            _logger = logger;
+            this.Servers = new List<IPEndPoint>();
+
+            this.Servers.Add(ConfigurationHelper.ResolveToEndPoint(host, port));
+            this.SocketPool = new SocketPoolConfiguration();
+			//this.Authentication = new AuthenticationConfiguration();
+			this.Protocol = MemcachedProtocol.Binary;
 		}   
 
 		/// <summary>
