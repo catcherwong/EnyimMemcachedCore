@@ -43,10 +43,10 @@ namespace Enyim.Caching
         protected ITranscoder Transcoder { get { return this.transcoder; } }
 
         public MemcachedClient(
-            ILoggerFactory loggerFactor,
+            ILogger<MemcachedClient> logger,
             IMemcachedClientConfiguration configuration)
         {
-            _logger = loggerFactor.CreateLogger<MemcachedClient>();
+            _logger = logger;
 
             if (configuration == null)
             {
