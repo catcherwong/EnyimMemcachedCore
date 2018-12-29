@@ -97,14 +97,12 @@ namespace Enyim.Caching.Configuration
             // parse as an IP address
             if (!IPAddress.TryParse(host, out address))
             {
-                Task<IPAddress[]> task = System.Net.Dns.GetHostAddressesAsync(host);
-                task.Wait(5000);
-                var addresses = task.Result;
-                address = addresses.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-                if (address == null)
-                    throw new ArgumentException(String.Format("Could not resolve host '{0}'.", host));
+                return new DnsEndPoint(host, port);
             }
-            return new IPEndPoint(address, port);
+            else
+            {
+                return new IPEndPoint(address, port);
+            }               
 		}
 	}
 }
