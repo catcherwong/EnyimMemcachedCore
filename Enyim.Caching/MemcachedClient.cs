@@ -11,8 +11,6 @@ using Enyim.Caching.Memcached.Results;
 using Enyim.Caching.Memcached.Results.Factories;
 using Enyim.Caching.Memcached.Results.Extensions;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Enyim.Caching
 {
@@ -26,7 +24,7 @@ namespace Enyim.Caching
         /// </summary>
         public static readonly TimeSpan Infinite = TimeSpan.Zero;
         //internal static readonly MemcachedClientSection DefaultSettings = ConfigurationManager.GetSection("enyim.com/memcached") as MemcachedClientSection;
-        private ILogger<MemcachedClient> _loggger;
+        private static readonly Enyim.Caching.ILog log = Enyim.Caching.LogManager.GetLogger(typeof(MemcachedClient));
 
         private IServerPool pool;
         private IMemcachedKeyTransformer keyTransformer;
@@ -41,11 +39,8 @@ namespace Enyim.Caching
         /// <summary>
         /// Initializes a new MemcachedClient instance using the default configuration section (enyim/memcached).
         /// </summary>
-        public MemcachedClient(ILogger<MemcachedClient> loggger)
-            : this(MemcachedClientConfiguration.CreateDefault())
-        {
-            _loggger = loggger;
-        }
+        public MemcachedClient()
+            : this(MemcachedClientConfiguration.CreateDefault()) { }
 
         protected IServerPool Pool { get { return this.pool; } }
         protected IMemcachedKeyTransformer KeyTransformer { get { return this.keyTransformer; } }
@@ -55,7 +50,7 @@ namespace Enyim.Caching
         /// Initializes a new instance of the <see cref="T:MemcachedClient"/> using the specified configuration instance.
         /// </summary>
         /// <param name="configuration">The client configuration.</param>
-        protected MemcachedClient(IMemcachedClientConfiguration configuration)
+        public MemcachedClient(IMemcachedClientConfiguration configuration)
         {
             if (configuration == null)
                 throw new ArgumentNullException("configuration");
@@ -64,6 +59,7 @@ namespace Enyim.Caching
             this.transcoder = configuration.CreateTranscoder() ?? new DefaultTranscoder();
 
             this.pool = configuration.CreatePool();
+            this.pool.NodeFailed += (n) => { var f = this.NodeFailed; if (f != null) f(n); };
             this.StartPool();
 
             StoreOperationResultFactory = new DefaultStoreOperationResultFactory();
@@ -124,8 +120,6 @@ namespace Enyim.Caching
         {
             var result = new DefaultGetOperationResultFactory<T>().Create();
 
-            _loggger.LogError("GetAsync");
-
             //var hashedKey = this.keyTransformer.Transform(key);
             var node = this.pool.Locate(key);
 
@@ -147,7 +141,7 @@ namespace Enyim.Caching
             }
             else
             {
-                _loggger.LogError("Unable to locate node");
+                log.Error("Unable to locate node");
             }
 
             result.Success = false;
@@ -386,7 +380,7 @@ namespace Enyim.Caching
                 try { item = this.transcoder.Serialize(value); }
                 catch (Exception e)
                 {
-                    _loggger.LogError("PerformStore", e);
+                    log.Error(e);
 
                     result.Fail("PerformStore failed", e);
                     return result;
@@ -434,7 +428,7 @@ namespace Enyim.Caching
                 try { item = this.transcoder.Serialize(value); }
                 catch (Exception e)
                 {
-                    _loggger.LogError("PerformStoreAsync", e);
+                    log.Error(e);
 
                     result.Fail("PerformStore failed", e);
                     return result;
@@ -927,7 +921,7 @@ namespace Enyim.Caching
                     }
                     catch (Exception e)
                     {
-                        _loggger.LogError("PerformMultiGet", e);
+                        log.Error(e);
                     }
                     finally
                     {
