@@ -1,43 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Enyim.Caching.Memcached.Results.Factories;
+using System.Configuration;
 
-namespace Enyim.Caching.Memcached.Results.Helpers
+namespace Enyim.Caching.Configuration
 {
-
-	public static class ResultHelper
+	internal class ConfigurationElementException : ConfigurationErrorsException
 	{
-
-		public static string ProcessResponseData(ArraySegment<byte> data, string message = "")
-		{
-
-			if (data != null && data.Count > 0)
-			{
-				try
-				{
-					return message +
-						(! string.IsNullOrEmpty(message) ? ": " : "") +
-						Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
-				}
-				catch (Exception ex)
-				{
-					return ex.GetBaseException().Message;
-				}
-			}
-
-			return string.Empty;
-		}
+		public ConfigurationElementException(string message, ConfigurationElement element) : this(message, null, element) { }
+		public ConfigurationElementException(string message, Exception inner, ConfigurationElement element) : base(message, inner, element.ElementInformation.Source, element.ElementInformation.LineNumber) { }
 	}
 }
 
 #region [ License information          ]
 /* ************************************************************
  * 
- *    @author Couchbase <info@couchbase.com>
- *    @copyright 2012 Couchbase, Inc.
- *    @copyright 2012 Attila Kiskó, enyim.com
+ *    Copyright (c) 2010 Attila Kiskó, enyim.com
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.

@@ -1,9 +1,7 @@
 using System;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Runtime.Serialization;
-using Newtonsoft.Json.Bson;
-using Newtonsoft.Json;
 
 namespace Enyim.Caching.Memcached
 {
@@ -42,16 +40,14 @@ namespace Enyim.Caching.Memcached
 			if (tmpByteArray != null)
 			{
 				return new CacheItem(RawDataFlag, new ArraySegment<byte>(tmpByteArray));
-			}            
+			}
 
-            ArraySegment<byte> data;
-            TypeCode code = value.GetType().GetTypeCode();
+			ArraySegment<byte> data;
+			TypeCode code = value == null ? TypeCode.DBNull : Type.GetTypeCode(value.GetType());
 
-            //TypeCode code = value == null ? TypeCode.DBNull : Type.GetTypeCode(value.GetType());
-
-            switch (code)
+			switch (code)
 			{
-				//case TypeCode.DBNull: data = this.SerializeNull(); break;
+				case TypeCode.DBNull: data = this.SerializeNull(); break;
 				case TypeCode.String: data = this.SerializeString((String)value); break;
 				case TypeCode.Boolean: data = this.SerializeBoolean((Boolean)value); break;
 				case TypeCode.SByte: data = this.SerializeSByte((SByte)value); break;
@@ -124,7 +120,7 @@ namespace Enyim.Caching.Memcached
 							? null
 							: DeserializeString(data);
 
-				//case TypeCode.DBNull: return null;
+				case TypeCode.DBNull: return null;
 				case TypeCode.String: return this.DeserializeString(data);
 				case TypeCode.Boolean: return this.DeserializeBoolean(data);
 				case TypeCode.Int16: return this.DeserializeInt16(data);
@@ -230,17 +226,13 @@ namespace Enyim.Caching.Memcached
 
 		protected virtual ArraySegment<byte> SerializeObject(object value)
 		{
-            using (var ms = new MemoryStream())
-            {
-                using (BsonWriter writer = new BsonWriter(ms))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Serialize(writer, value);
-                }
+			using (var ms = new MemoryStream())
+			{
+				new BinaryFormatter().Serialize(ms, value);
 
-                return new ArraySegment<byte>(ms.ToArray(), 0, (int)ms.Length);
-            }
-        }
+				return new ArraySegment<byte>(ms.GetBuffer(), 0, (int)ms.Length);
+			}
+		}
 
 		#endregion
 		#region [ Typed deserialization        ]
@@ -319,12 +311,8 @@ namespace Enyim.Caching.Memcached
 		{
 			using (var ms = new MemoryStream(value.Array, value.Offset, value.Count))
 			{
-                using (BsonReader reader = new BsonReader(ms))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    return serializer.Deserialize(reader);
-                }
-            }
+				return new BinaryFormatter().Deserialize(ms);
+			}
 		}
 
 		#endregion

@@ -17,8 +17,13 @@ namespace Enyim
 	{
 		public HashkitOneAtATime()
 		{
+			this.HashSizeValue = 32;
 		}
-	
+
+		public override bool CanTransformMultipleBlocks
+		{
+			get { return false; }
+		}
 
 		public override void Initialize() { }
 

@@ -5,7 +5,7 @@ namespace Enyim.Caching.Memcached
 	/// <summary>
 	/// The exception that is thrown when a command is not supported by the Memcached server.
 	/// </summary>
-	//[global::System.Serializable]
+	[global::System.Serializable]
 	public class CommandNotSupportedException : MemcachedClientException
 	{
 		/// <summary>
@@ -19,14 +19,21 @@ namespace Enyim.Caching.Memcached
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:CommandNotSupportedException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.
 		/// </summary>
-		public CommandNotSupportedException(string message, Exception inner) : base(message, inner) { }		
+		public CommandNotSupportedException(string message, Exception inner) : base(message, inner) { }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:CommandNotSupportedException"/> class with serialized data.
+		/// </summary>
+		protected CommandNotSupportedException(
+		  System.Runtime.Serialization.SerializationInfo info,
+		  System.Runtime.Serialization.StreamingContext context)
+			: base(info, context) { }
 	}
 }
 
 #region [ License information          ]
 /* ************************************************************
  * 
- *    Copyright (c) 2010 Attila Kisk? enyim.com
+ *    Copyright (c) 2010 Attila Kiskó, enyim.com
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.

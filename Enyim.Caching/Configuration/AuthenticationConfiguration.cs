@@ -1,33 +1,27 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Enyim.Caching.Memcached.Results.Factories;
+using Enyim.Caching.Memcached;
 
-namespace Enyim.Caching.Memcached.Results.Helpers
+namespace Enyim.Caching.Configuration
 {
-
-	public static class ResultHelper
+	public class AuthenticationConfiguration : IAuthenticationConfiguration
 	{
+		private Type authenticator;
+		private Dictionary<string, object> parameters;
 
-		public static string ProcessResponseData(ArraySegment<byte> data, string message = "")
+		Type IAuthenticationConfiguration.Type
 		{
-
-			if (data != null && data.Count > 0)
+			get { return this.authenticator; }
+			set
 			{
-				try
-				{
-					return message +
-						(! string.IsNullOrEmpty(message) ? ": " : "") +
-						Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
-				}
-				catch (Exception ex)
-				{
-					return ex.GetBaseException().Message;
-				}
+				ConfigurationHelper.CheckForInterface(value, typeof(ISaslAuthenticationProvider));
+				this.authenticator = value;
 			}
+		}
 
-			return string.Empty;
+		Dictionary<string, object> IAuthenticationConfiguration.Parameters
+		{
+			get { return this.parameters ?? (this.parameters = new Dictionary<string, object>()); }
 		}
 	}
 }
@@ -35,9 +29,7 @@ namespace Enyim.Caching.Memcached.Results.Helpers
 #region [ License information          ]
 /* ************************************************************
  * 
- *    @author Couchbase <info@couchbase.com>
- *    @copyright 2012 Couchbase, Inc.
- *    @copyright 2012 Attila Kiskó, enyim.com
+ *    Copyright (c) 2010 Attila Kisk? enyim.com
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.

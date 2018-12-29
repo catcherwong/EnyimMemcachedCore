@@ -1,33 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Text;
-using Enyim.Caching.Memcached.Results.Factories;
+using System.Security.Cryptography;
+using System.Threading;
+using Enyim.Caching.Configuration;
 
-namespace Enyim.Caching.Memcached.Results.Helpers
+namespace Enyim.Caching.Memcached
 {
-
-	public static class ResultHelper
+	/// <summary>
+	/// Implements Ketama cosistent hashing, compatible with the "spymemcached" Java client
+	/// </summary>
+	public class KetamaNodeLocatorFactory : IProviderFactory<IMemcachedNodeLocator>
 	{
+		private string hashName;
 
-		public static string ProcessResponseData(ArraySegment<byte> data, string message = "")
+		void IProvider.Initialize(Dictionary<string, string> parameters)
 		{
+			ConfigurationHelper.TryGetAndRemove(parameters, "hashName", out this.hashName, false);
+		}
 
-			if (data != null && data.Count > 0)
-			{
-				try
-				{
-					return message +
-						(! string.IsNullOrEmpty(message) ? ": " : "") +
-						Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
-				}
-				catch (Exception ex)
-				{
-					return ex.GetBaseException().Message;
-				}
-			}
-
-			return string.Empty;
+		IMemcachedNodeLocator IProviderFactory<IMemcachedNodeLocator>.Create()
+		{
+			return new KetamaNodeLocator(this.hashName);
 		}
 	}
 }
@@ -35,9 +30,7 @@ namespace Enyim.Caching.Memcached.Results.Helpers
 #region [ License information          ]
 /* ************************************************************
  * 
- *    @author Couchbase <info@couchbase.com>
- *    @copyright 2012 Couchbase, Inc.
- *    @copyright 2012 Attila Kiskó, enyim.com
+ *    Copyright (c) 2010 Attila Kisk�, enyim.com
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.

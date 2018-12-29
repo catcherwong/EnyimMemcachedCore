@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Configuration;
 using Enyim.Caching.Configuration;
 using Enyim.Caching.Memcached;
 using System.Collections.Generic;
@@ -969,17 +970,16 @@ namespace Enyim.Caching
         {
             try
             {
-                //Not support .NET Core
-                //if (Thread.CurrentThread.GetApartmentState() == ApartmentState.MTA)
-                //    WaitHandle.WaitAll(waitHandles);
-                //else
+                if (Thread.CurrentThread.GetApartmentState() == ApartmentState.MTA)
+                    WaitHandle.WaitAll(waitHandles);
+                else
                     for (var i = 0; i < waitHandles.Length; i++)
                         waitHandles[i].WaitOne();
             }
             finally
             {
                 for (var i = 0; i < waitHandles.Length; i++)
-                    waitHandles[i].Dispose();
+                    waitHandles[i].Close();
             }
         }
 

@@ -2,42 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Enyim.Caching.Memcached.Results.Factories;
+using System.Security.Cryptography;
+using System.Net;
+using System.Collections.ObjectModel;
+using System.Web;
 
-namespace Enyim.Caching.Memcached.Results.Helpers
+namespace Enyim.Caching.Configuration
 {
-
-	public static class ResultHelper
+	public interface IVBucketConfiguration
 	{
+		HashAlgorithm CreateHashAlgorithm();
+		IList<IPEndPoint> Servers { get; }
+		IList<VBucket> Buckets { get; }
+	}
 
-		public static string ProcessResponseData(ArraySegment<byte> data, string message = "")
+	public struct VBucket
+	{
+		private int master;
+		private int[] replicas;
+
+		public VBucket(int master, int[] replicas)
 		{
-
-			if (data != null && data.Count > 0)
-			{
-				try
-				{
-					return message +
-						(! string.IsNullOrEmpty(message) ? ": " : "") +
-						Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
-				}
-				catch (Exception ex)
-				{
-					return ex.GetBaseException().Message;
-				}
-			}
-
-			return string.Empty;
+			this.master = master;
+			this.replicas = replicas;
 		}
+
+		public int Master { get { return this.master; } }
+		public int[] Replicas { get { return this.replicas; } }
 	}
 }
 
 #region [ License information          ]
 /* ************************************************************
  * 
- *    @author Couchbase <info@couchbase.com>
- *    @copyright 2012 Couchbase, Inc.
- *    @copyright 2012 Attila Kiskó, enyim.com
+ *    Copyright (c) 2010 Attila Kiskó, enyim.com
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.

@@ -13,7 +13,7 @@ namespace Enyim.Caching.Memcached
 			TigerHash th = new TigerHash();
 			byte[] data = th.ComputeHash(Encoding.Unicode.GetBytes(key));
 
-			return Convert.ToBase64String(data);
+			return Convert.ToBase64String(data, Base64FormattingOptions.None);
 		}
 	}
 }
@@ -21,7 +21,7 @@ namespace Enyim.Caching.Memcached
 #region [ License information          ]
 /* ************************************************************
  * 
- *    Copyright (c) 2010 Attila Kisk? enyim.com
+ *    Copyright (c) 2010 Attila Kiskó, enyim.com
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
