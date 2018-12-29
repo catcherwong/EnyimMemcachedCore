@@ -30,16 +30,11 @@ namespace Enyim.Caching
 	{
 		private static ILogFactory factory;
 
-        //TODO: Swith to Microsoft.Extensions.Logging
-        static LogManager()
+		static LogManager()
 		{
-#if DEBUG
             factory = new ConsoleLogFactory();
-#else
-            factory = new NullLoggerFactory();
-#endif
-            //			var section = ConfigurationManager.GetSection("enyim.com/log") as Enyim.Caching.Configuration.LoggerSection;
-            //			ILogFactory f = null;
+//			var section = ConfigurationManager.GetSection("enyim.com/log") as Enyim.Caching.Configuration.LoggerSection;
+//			ILogFactory f = null;
 
             //			if (section != null && section.LogFactory != null)
             //			{
