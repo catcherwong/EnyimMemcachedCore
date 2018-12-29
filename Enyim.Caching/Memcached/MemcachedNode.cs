@@ -591,13 +591,14 @@ namespace Enyim.Caching.Memcached
                 {
                     var pooledSocket = result.Value;
 
+
                     //if Get, call BinaryRequest.CreateBuffer()
                     var b = op.GetBuffer();
 
                     await pooledSocket.WriteSync(b);
 
                     //if Get, call BinaryResponse
-                    var readResult = await op.ReadResponseAsync(pooledSocket);
+                    var readResult = op.ReadResponse(pooledSocket);
                     if (readResult.Success)
                     {
                         result.Pass();
