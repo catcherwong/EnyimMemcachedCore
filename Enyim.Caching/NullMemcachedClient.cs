@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Enyim.Caching.Memcached;
@@ -41,37 +40,37 @@ namespace Enyim.Caching
 
         public CasResult<bool> Cas(StoreMode mode, string key, object value, DateTime expiresAt, ulong cas)
         {
-            return new CasResult<bool>();
+            throw new NotImplementedException();
         }
 
         public ulong Decrement(string key, ulong defaultValue, ulong delta)
         {
-            return default(ulong);
+            throw new NotImplementedException();
         }
 
         public ulong Decrement(string key, ulong defaultValue, ulong delta, TimeSpan validFor)
         {
-            return default(ulong);
+            throw new NotImplementedException();
         }
 
         public CasResult<ulong> Decrement(string key, ulong defaultValue, ulong delta, ulong cas)
         {
-            return new CasResult<ulong>();
+            throw new NotImplementedException();
         }
 
         public ulong Decrement(string key, ulong defaultValue, ulong delta, DateTime expiresAt)
         {
-            return default(ulong);
+            throw new NotImplementedException();
         }
 
         public CasResult<ulong> Decrement(string key, ulong defaultValue, ulong delta, TimeSpan validFor, ulong cas)
         {
-            return new CasResult<ulong>();
+            throw new NotImplementedException();
         }
 
         public CasResult<ulong> Decrement(string key, ulong defaultValue, ulong delta, DateTime expiresAt, ulong cas)
         {
-            return new CasResult<ulong>();
+            throw new NotImplementedException();
         }
 
         public void Dispose()
@@ -119,57 +118,57 @@ namespace Enyim.Caching
 
         public IDictionary<string, CasResult<object>> GetWithCas(IEnumerable<string> keys)
         {
-            return new Dictionary<string, CasResult<object>>();
+            throw new NotImplementedException();
         }
 
         public CasResult<object> GetWithCas(string key)
         {
-            return new CasResult<object>();
+            throw new NotImplementedException();
         }
 
         public CasResult<T> GetWithCas<T>(string key)
         {
-            return new CasResult<T>();
+            throw new NotImplementedException();
         }
 
         public ulong Increment(string key, ulong defaultValue, ulong delta)
         {
-            return default(ulong);
+            throw new NotImplementedException();
         }
 
         public ulong Increment(string key, ulong defaultValue, ulong delta, TimeSpan validFor)
         {
-            return default(ulong);
+            throw new NotImplementedException();
         }
 
         public CasResult<ulong> Increment(string key, ulong defaultValue, ulong delta, ulong cas)
         {
-            return new CasResult<ulong>();
+            throw new NotImplementedException();
         }
 
         public ulong Increment(string key, ulong defaultValue, ulong delta, DateTime expiresAt)
         {
-            return default(ulong);
+            throw new NotImplementedException();
         }
 
         public CasResult<ulong> Increment(string key, ulong defaultValue, ulong delta, TimeSpan validFor, ulong cas)
         {
-            return new CasResult<ulong>();
+            throw new NotImplementedException();
         }
 
         public CasResult<ulong> Increment(string key, ulong defaultValue, ulong delta, DateTime expiresAt, ulong cas)
         {
-            return new CasResult<ulong>();
+            throw new NotImplementedException();
         }
 
         public bool Prepend(string key, ArraySegment<byte> data)
         {
-            return false;
+            throw new NotImplementedException();
         }
 
         public CasResult<bool> Prepend(string key, ulong cas, ArraySegment<byte> data)
         {
-            return new CasResult<bool>();
+            throw new NotImplementedException();
         }
 
         public bool Remove(string key)
@@ -177,14 +176,14 @@ namespace Enyim.Caching
             return true;
         }
 
-        public Task<bool> RemoveAsync(string key)
+        public async Task<bool> RemoveAsync(string key)
         {
-            return Task.FromResult<bool>(false);
+            return true;
         }
 
         public ServerStats Stats()
         {
-            return new ServerStats(new Dictionary<EndPoint, Dictionary<string, string>>());
+            throw new NotImplementedException();
         }
 
         public ServerStats Stats(string type)
@@ -219,14 +218,12 @@ namespace Enyim.Caching
 
         public bool TryGet(string key, out object value)
         {
-            value = null;
-            return false;
+            throw new NotImplementedException();
         }
 
         public bool TryGetWithCas(string key, out CasResult<object> value)
         {
-            value = new CasResult<object>();
-            return false;
+            throw new NotImplementedException();
         }
 
         public void Add(string key, object value, int cacheSeconds)
