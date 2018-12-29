@@ -220,7 +220,6 @@ namespace Enyim.Caching
                 var result = await GetAsync<T>(key);
                 if (result.Success)
                 {
-                    _logger.LogDebug($"Cache is hint. Key is '{key}'.");
                     return result.Value;
                 }
             }
@@ -229,15 +228,12 @@ namespace Enyim.Caching
                 _logger.LogError(ex, $"{nameof(GetAsync)}<{typeof(T)}>(\"{key}\")");
             }
 
-            _logger.LogDebug($"Cache is missed. Key is '{key}'.");
-
             var value = await generator?.Invoke();
             if (value != null)
             {
                 try
                 {
                     await AddAsync(key, value, cacheSeconds);
-                    _logger.LogDebug($"Added value into cache. Key is '{key}'. " + value);
                 }
                 catch (Exception ex)
                 {
